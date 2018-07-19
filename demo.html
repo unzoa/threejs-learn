@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>three demo</title>
+  <link rel="stylesheet" type="text/css" href="../_y.css">
+</head>
+<body>
+<script src="third-party/three.min.js"></script>
+<script>
+/*
+* webgl的创建过程
+** 初始化webgl绘制上下文
+** 初始化着色器程序
+** 建立模型和数据缓存
+** 完成绘制和动画
+*
+* three以一种面向对象式构建程序，包含3个基本对象
+** 场景（scene） 3D空间
+** 相机（camera）数据模型
+** 渲染器（renderer）webgl绘制上下文和着色器
+*/
+
+var globe_w = window.innerWidth,
+    globe_h = window.innerHeight;
+
+// scene
+var scene = new THREE.Scene();
+// carmera
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+// 创建渲染器
+var renderer = new THREE.WebGLRenderer();
+renderer.setClearColor(0x02b886);
+renderer.setSize( globe_w, globe_h );
+
+// 添加到dom
+document.body.appendChild( renderer.domElement );
+
+/*
+* 创建3d立方体
+** 创建盒子模型
+** 创建盒子材料
+** 利用网孔承载几何模型，并且把材料利用
+** 最后添加到场景中，即原点（但是这时场景和立方体重合，需要将相机移动一下）
+*/ 
+var geometry = new THREE.BoxGeometry( 1, 2, 3 );
+var material = new THREE.MeshBasicMaterial( { color: 'pink' } );
+var cube = new THREE.Mesh( geometry, material );
+scene.add( cube );
+camera.position.z = 5;
+
+/*
+* 渲染场景
+* 这时创建一个渲染循环（render loop）
+*/ 
+function render () {
+  /*
+  * 这将创建一个每秒60次的刷新
+  ** requestAnimationFrame是一个新的api代替setInterval
+  ** 当切换tab时候体制渲染
+  ** 在不支持此api的浏览器，自动退回setInterval
+  */
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
+  requestAnimationFrame(render);
+  renderer.render( scene, camera);
+}
+render();
+
+</script>
+</body>
+</html>

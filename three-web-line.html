@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>line</title>
+  <style>
+    html,
+    body{
+      height: 100%;
+      padding:0;
+      margin:0;
+      overflow: hidden;
+    }
+    .main{height: 100%;}
+  </style>
+</head>
+<body>
+<div id="canvas-frame" class="main"></div>
+<script src="third-party/three.min.js">
+  // 69
+</script>
+<!-- <script src="third-party/three.js">
+  // 93 没有生成图像
+</script> -->
+<script src="third-party/stats.min.js"></script>
+<script>
+  /*
+    data ----------------------------------------
+  */ 
+  var camera,
+      scene,
+      renderer,
+      material,
+      stas;
+
+  var mainDom = document.querySelector('.main'),
+      globe_w = mainDom.offsetWidth,
+      globe_H = mainDom.offsetHeight;
+
+  var line;
+
+  /*
+    method ----------------------------------------
+  */ 
+  function initThree() {
+    renderer = new THREE.WebGLRenderer({antialias : true });
+    renderer.setSize(globe_w, globe_H);
+    document.getElementById('canvas-frame').appendChild(renderer.domElement);
+    renderer.setClearColor(0x333333, 1.0);
+
+    stats = new Stats();
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.left = '0px';
+    stats.domElement.style.top = '0px';
+    document.getElementById('canvas-frame').appendChild(stats.domElement);
+  }
+
+  function initCamera() {
+    camera = new THREE.PerspectiveCamera(45, globe_w / globe_H, 1, 10000);
+    camera.position.x = 0;
+    camera.position.y = 0;
+    camera.position.z = 1000;
+    camera.up.x = 0;
+    camera.up.y = 0;
+    camera.up.z = 0;
+    camera.lookAt({x : 0, y : 0, z : 0 });
+  }
+
+  function initScene() {
+    scene = new THREE.Scene();
+  }
+
+  function initObject () {
+    var material = new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors} );
+    
+    var geometry = new THREE.Geometry();
+    geometry.vertices.push(new THREE.Vector3( -100, 0, 0) );
+    geometry.vertices.push(new THREE.Vector3( 100, 0, 0) );
+    geometry.colors.push(new THREE.Color('pink'), new THREE.Color('blue'))
+    
+    line = new THREE.Line( geometry, material );
+    scene.add(line);
+
+    for (let i = 20; i--;) {
+      line = new THREE.Line( geometry, material );
+      line.position.y = 10*i - 100;
+      scene.add(line);
+
+      line = new THREE.Line( geometry, material );
+      line.position.x = 10 * i - 100;
+      line.rotation.z = 90 * Math.PI / 180;
+      scene.add(line)
+    }
+
+  }
+
+  function render() {
+    scene.rotation.x += 0.01
+    scene.rotation.y += 0.01
+
+    // first
+    // camera.position.x += 1;
+    // twice
+    // zhuzi.position.x -= 1;
+
+    renderer.clear();
+    renderer.render(scene, camera);
+    requestAnimationFrame(render);
+
+    stats.update();
+
+  }
+
+  /*
+    start ----------------------------------------
+  */
+  function threeStart() {
+    initThree();
+    initCamera();
+    initScene();
+    initObject();
+    render();
+  }
+  threeStart()
+
+</script>
+</body>
+</html>
